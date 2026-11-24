@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ใบหยิบสินค้า / แพ็ค / ใบจ่าหน้าพัสดุ</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@400;500;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#10281f;--leaf:#1f6b4f;--line:#cfe0d6;--mist:#eef6f1}
+*{box-sizing:border-box}
+body{margin:0;font-family:'Noto Sans Thai',Tahoma,sans-serif;color:var(--ink);background:#f6faf7;line-height:1.55}
+.wrap{max-width:1000px;margin:0 auto;padding:20px}
+h1{margin:0 0 4px}h2{margin:32px 0 12px;font-size:22px;border-bottom:3px solid var(--leaf);padding-bottom:6px}
+.bar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin:14px 0}
+button,select{font:inherit;padding:9px 16px;border-radius:8px;border:1px solid #9fb8aa;background:#fff;cursor:pointer}
+button.primary{background:var(--leaf);color:#fff;border-color:var(--leaf);font-weight:700}
+button:focus-visible,select:focus-visible{outline:3px solid #ffb703;outline-offset:2px}
+table{width:100%;border-collapse:collapse;background:#fff}
+th,td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:middle}
+th{background:var(--mist)}
+td img{width:56px;height:56px;object-fit:cover;border-radius:6px;display:block}
+.num{text-align:right}
+.big{font-size:20px;font-weight:800}
+.pack{background:#fff;border:1px solid var(--line);border-radius:10px;padding:12px 16px;margin-bottom:10px}
+.labels{display:grid;grid-template-columns:repeat(auto-fill,minmax(420px,1fr));gap:16px}
+.label{background:#fff;border:2px dashed #333;padding:14px 16px;break-inside:avoid;page-break-inside:avoid;font-size:15px}
+.label .from{font-size:13px;border-bottom:1px solid #999;padding-bottom:8px;margin-bottom:10px}
+.label .to{font-size:19px;font-weight:700}
+.label .addr{font-size:17px}
+.label .items{margin-top:10px;font-size:14px;border-top:1px solid #999;padding-top:6px}
+.tag{display:inline-block;padding:1px 10px;border-radius:20px;background:var(--mist);font-size:13px}
+.note{background:#fff7d6;border:1px solid #f0d878;border-radius:8px;padding:10px 14px;margin:10px 0}
+@media print{
+ body{background:#fff}.noprint{display:none!important}.wrap{padding:0;max-width:none}
+ .labels{grid-template-columns:1fr 1fr;gap:8mm}.label{font-size:12pt}
+ body.print-labels section:not(#sec-labels){display:none}
+ body.print-pick section:not(#sec-pick){display:none}
+ body.print-pack section:not(#sec-pack){display:none}
+ h1,.sub{display:none}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+<h1>ใบหยิบสินค้า / แพ็ค / ใบจ่าหน้าพัสดุ</h1>
+<div class="sub" id="sub">กำลังโหลดข้อมูล...</div>
+<div class="note noprint" id="note" hidden></div>
+
+<div class="bar noprint">
+ <label>แสดงออเดอร์สถานะ
+ <select id="filter"><option value="รอแพ็ค">รอแพ็ค</option><option value="แพ็คแล้ว">แพ็คแล้ว</option><option value="จัดส่งแล้ว">จัดส่งแล้ว</option><option value="">ทั้งหมด</option></select></label>
+ <button class="primary" onclick="doPrint('pick')">พิมพ์ใบหยิบ</button>
+ <button class="primary" onclick="doPrint('pack')">พิมพ์ใบแพ็ค</button>
+ <button class="primary" onclick="doPrint('labels')">พิมพ์ใบจ่าหน้า</button>
+ <button onclick="doPrint('')">พิมพ์ทั้งหมด</button>
+</div>
+
+<section id="sec-pick"><h2>1. ใบหยิบสินค้า (รวมตามสินค้า)</h2>
+<table><thead><tr><th>รูป</th><th>SKU</th><th>สินค้า</th><th class="num">จำนวนที่ต้องหยิบ</th><th class="noprint">✓</th></tr></thead><tbody id="pick"></tbody></table></section>
+
+<section id="sec-pack"><h2>2. ใบแพ็คสินค้า (แยกตามออเดอร์)</h2><div id="pack"></div></section>
+
+<section id="sec-labels"><h2>3. ใบจ่าหน้าพัสดุ</h2><div class="labels" id="labels"></div></section>
+</div>
+
+<script>
+/* ===== ตั้งค่า: วางลิงก์ CSV จาก Google Sheet (เผยแพร่ไปยังเว็บ > CSV ทีละชีต) ===== */
+const PRODUCTS_CSV = "";   // ชีต Products
+const ORDERS_CSV   = "";   // ชีต Orders
+const SHOP_CSV     = "";   // ชีต Shop
+/* ถ้ายังไม่ใส่ลิงก์ จะใช้ข้อมูลตัวอย่างด้านล่าง */
+const FB_PRODUCTS=[["SKU","ชื่อ","ราคา","ขนาด","รายละเอียด","รูป"],
+ ["SH-001","แชมพูสมุนไพรอัญชัน","159","250 ml","","IMG_3953.webp"],
+ ["SH-002","แชมพูขจัดรังแค ซิงค์ไพริไทออน","189","300 ml","","IMG_3954.jpeg"]];
+const FB_ORDERS=[["เลขออเดอร์","วันที่","ชื่อผู้รับ","เบอร์โทร","ที่อยู่","SKU","จำนวน","ชื่อสินค้า","ราคา","ยอดรวม","สถานะ"],
+ ["ORD-001","2026-11-24","คุณสมชาย ใจดี","081-234-5678","99/9 ถ.สุขุมวิท แขวงคลองเตย เขตคลองเตย กรุงเทพฯ 10110","SH-001","2","","","","รอแพ็ค"],
+ ["ORD-002","2026-11-24","คุณสมหญิง รักสวย","089-876-5432","12/3 ม.4 ต.สุเทพ อ.เมือง จ.เชียงใหม่ 50200","SH-002","1","","","","รอแพ็ค"],
+ ["ORD-003","2026-11-24","คุณวิชัย มั่นคง","086-111-2222","55 ถ.มิตรภาพ ต.ในเมือง อ.เมือง จ.ขอนแก่น 40000","SH-001","3","","","","แพ็คแล้ว"]];
+const FB_SHOP=[["รายการ","ค่า"],["ชื่อร้าน (ผู้ส่ง)","ร้านแชมพูสมุนไพร"],["เบอร์โทรผู้ส่ง","02-000-0000"],["ที่อยู่ผู้ส่ง","1 ถ.ตัวอย่าง แขวงตัวอย่าง เขตตัวอย่าง กรุงเทพฯ 10000"]];
+
+function parseCSV(t){const rows=[];let r=[],f="",q=false;
+ for(let i=0;i<t.length;i++){const c=t[i];
+  if(q){if(c=='"'){if(t[i+1]=='"'){f+='"';i++}else q=false}else f+=c}
+  else if(c=='"')q=true;else if(c==','){r.push(f);f=""}
+  else if(c=='\n'){r.push(f);rows.push(r);r=[];f=""}else if(c!='\r')f+=c}
+ if(f!==""||r.length){r.push(f);rows.push(r)}return rows}
+async function get(url,fb){if(!url)return{rows:fb,live:false};
+ try{const res=await fetch(url);if(!res.ok)throw 0;return{rows:parseCSV(await res.text()),live:true}}catch(e){return{rows:fb,live:false}}}
+const esc=s=>String(s??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]));
+
+let P={},O=[],S={};
+async function init(){
+ const [p,o,s]=await Promise.all([get(PRODUCTS_CSV,FB_PRODUCTS),get(ORDERS_CSV,FB_ORDERS),get(SHOP_CSV,FB_SHOP)]);
+ p.rows.slice(1).filter(r=>r[0]).forEach(r=>P[r[0].trim()]={name:r[1],price:Number(r[2])||0,image:(r[5]||"").trim()});
+ O=o.rows.slice(1).filter(r=>r[0]).map(r=>({id:r[0],date:r[1],name:r[2],tel:r[3],addr:r[4],sku:(r[5]||"").trim(),qty:parseInt(r[6])||0,status:(r[10]||"").trim()}));
+ S=Object.fromEntries(s.rows.slice(1).map(r=>[r[0],r[1]]));
+ const live=p.live&&o.live;
+ sub.textContent=live?"ข้อมูลจาก Google Sheet":"กำลังใช้ข้อมูลตัวอย่าง";
+ if(!live){note.hidden=false;note.textContent="ยังไม่ได้ใส่ลิงก์ CSV (หรือโหลดไม่สำเร็จ) หน้านี้จึงแสดงข้อมูลตัวอย่าง ให้แก้ค่า PRODUCTS_CSV / ORDERS_CSV / SHOP_CSV ในไฟล์ picking.html"}
+ render();
+}
+function render(){
+ const f=filter.value;const list=O.filter(x=>!f||x.status===f);
+ // pick list
+ const sum={};list.forEach(x=>sum[x.sku]=(sum[x.sku]||0)+x.qty);
+ const skus=Object.keys(sum).sort();
+ pick.innerHTML=skus.length?skus.map(k=>{const p=P[k]||{name:"(ไม่พบ SKU ในชีต Products)",image:""};
+  return `<tr><td>${p.image?`<img src="${esc(p.image)}" alt="" onerror="this.style.visibility='hidden'">`:""}</td><td>${esc(k)}</td><td>${esc(p.name)}</td><td class="num big">${sum[k]}</td><td class="noprint"><input type="checkbox" aria-label="หยิบแล้ว ${esc(k)}"></td></tr>`}).join("")
+  +`<tr><td colspan="3" class="num"><b>รวมทั้งหมด</b></td><td class="num big">${Object.values(sum).reduce((a,b)=>a+b,0)}</td><td class="noprint"></td></tr>`
+  :'<tr><td colspan="5">ไม่มีออเดอร์ในสถานะนี้</td></tr>';
+ // pack
+ pack.innerHTML=list.map(x=>{const p=P[x.sku]||{name:x.sku,price:0};
+  return `<div class="pack"><b>${esc(x.id)}</b> <span class="tag">${esc(x.status)}</span> · ${esc(x.name)}<br>
+  ${esc(p.name)} (${esc(x.sku)}) × <b>${x.qty}</b> · ยอดรวม ฿${(p.price*x.qty).toLocaleString("th-TH")}</div>`}).join("")||"ไม่มีออเดอร์ในสถานะนี้";
+ // labels
+ labels.innerHTML=list.map(x=>{const p=P[x.sku]||{name:x.sku};
+  return `<div class="label"><div class="from"><b>ผู้ส่ง:</b> ${esc(S["ชื่อร้าน (ผู้ส่ง)"]||"")} โทร ${esc(S["เบอร์โทรผู้ส่ง"]||"")}<br>${esc(S["ที่อยู่ผู้ส่ง"]||"")}</div>
+  <div class="to">ถึง: ${esc(x.name)}</div><div class="addr">${esc(x.addr)}</div><div class="addr">โทร ${esc(x.tel)}</div>
+  <div class="items">${esc(x.id)} · ${esc(p.name)} × ${x.qty}</div></div>`}).join("")||"ไม่มีออเดอร์ในสถานะนี้";
+}
+filter.addEventListener("change",render);
+function doPrint(w){document.body.className=w?"print-"+w:"";window.print();setTimeout(()=>document.body.className="",500)}
+init();
+</script>
+</body>
+</html>
