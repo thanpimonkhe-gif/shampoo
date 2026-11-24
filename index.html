@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>แชมพูสมุนไพร | สั่งซื้อออนไลน์</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@400;500;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#10281f;--leaf:#1f6b4f;--pea:#5b4bdb;--mist:#eef6f1;--paper:#fbfdfb;--line:#cfe0d6}
+*{box-sizing:border-box}
+body{margin:0;font-family:'Noto Sans Thai',Tahoma,sans-serif;color:var(--ink);background:var(--paper);line-height:1.65}
+.wrap{max-width:1040px;margin:0 auto;padding:0 20px}
+header.top{padding:16px 0;border-bottom:1px solid var(--line)}
+header.top .wrap{display:flex;justify-content:space-between;align-items:center}
+.logo{font-weight:800;font-size:20px;color:var(--leaf)}
+.top a{color:var(--ink);text-decoration:none;font-weight:500}
+.hero{background:var(--ink);color:#fff;padding:64px 0 72px}
+.hero h1{font-size:clamp(34px,6vw,60px);line-height:1.15;margin:0 0 16px;font-weight:800;max-width:14em}
+.hero p{max-width:34em;font-size:18px;color:#cfe6da;margin:0 0 28px}
+.btn{display:inline-block;border:0;border-radius:10px;padding:12px 24px;font:inherit;font-weight:700;cursor:pointer;background:var(--pea);color:#fff;text-decoration:none}
+.btn:hover{filter:brightness(1.1)}
+.btn:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-visible{outline:3px solid #ffb703;outline-offset:2px}
+.points{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:24px;padding:40px 0}
+.points div{border-left:4px solid var(--leaf);padding-left:14px}
+.points b{display:block;font-size:18px}
+h2{font-size:30px;margin:8px 0 24px}
+#products{padding:24px 0 56px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:28px}
+.card{background:#fff;border:1px solid var(--line);border-radius:16px;overflow:hidden;display:flex;flex-direction:column}
+.card .img{aspect-ratio:1/1;background:var(--mist);display:flex;align-items:center;justify-content:center;font-size:72px}
+.card img{width:100%;height:100%;object-fit:cover;display:block}
+.card .body{padding:18px 20px 22px;display:flex;flex-direction:column;gap:6px;flex:1}
+.card h3{margin:0;font-size:20px}
+.size{color:#51695d;font-size:14px}
+.price{font-size:26px;font-weight:800;color:var(--leaf)}
+.card .btn{margin-top:auto}
+.msg{padding:24px;background:var(--mist);border-radius:12px}
+footer{background:var(--mist);padding:28px 0;color:#41584d;font-size:14px}
+dialog{border:0;border-radius:16px;padding:0;width:min(460px,92vw);box-shadow:0 20px 60px rgba(0,0,0,.35)}
+dialog::backdrop{background:rgba(16,40,31,.6)}
+dialog form,dialog .done{padding:24px}
+dialog h3{margin:0 0 4px;font-size:22px}
+label{display:block;font-weight:500;margin-top:12px;font-size:15px}
+input,textarea{width:100%;font:inherit;padding:10px 12px;border:1px solid #9fb8aa;border-radius:8px;margin-top:4px}
+.row{display:flex;gap:10px;margin-top:20px}
+.row .btn{flex:1}.ghost{background:#e5eee9;color:var(--ink)}
+.sum{background:var(--mist);border-radius:10px;padding:12px 14px;margin-top:14px;font-weight:500}
+.err{color:#b00020;font-size:14px;min-height:20px}
+@media (prefers-reduced-motion:no-preference){.hero h1{animation:rise .6s ease-out both}@keyframes rise{from{opacity:0;transform:translateY(12px)}}}
+</style>
+</head>
+<body>
+<header class="top"><div class="wrap"><span class="logo" id="shopName">แชมพูสมุนไพร</span><a href="#products">ดูสินค้า</a></div></header>
+
+<section class="hero"><div class="wrap">
+<h1>สระผมทุกครั้ง ให้หนังศีรษะได้พักจากสารเคมีแรง</h1>
+<p>แชมพูสูตรอ่อนโยนจากสมุนไพรไทย เลือกสูตรบำรุงรากผม หรือสูตรขจัดรังแคตามปัญหาผมของคุณ</p>
+<a class="btn" href="#products">เลือกสูตรของคุณ</a>
+</div></section>
+
+<div class="wrap">
+<section class="points">
+<div><b>สกัดจากสมุนไพรไทย</b>อัญชัน มะกรูด ว่านหางจระเข้</div>
+<div><b>สูตรอ่อนโยน</b>ใช้ได้ทุกวัน ไม่ทำให้หนังศีรษะแห้ง</div>
+<div><b>จัดส่งทั่วประเทศ</b>แพ็คเรียบร้อย พร้อมใบจ่าหน้าพัสดุ</div>
+</section>
+
+<section id="products">
+<h2>สินค้าของเรา</h2>
+<div class="grid" id="grid"><div class="msg">กำลังโหลดสินค้า...</div></div>
+</section>
+</div>
+
+<footer><div class="wrap">ผู้ขาย: <span id="shopName2">แชมพูสมุนไพร</span> · โทร <span id="shopTel">-</span></div></footer>
+
+<dialog id="dlg">
+<form id="orderForm" method="dialog">
+<h3>สั่งซื้อ</h3>
+<div class="sum" id="sum"></div>
+<label>จำนวน<input type="number" id="qty" min="1" value="1" required></label>
+<label>ชื่อผู้รับ<input id="name" required autocomplete="name"></label>
+<label>เบอร์โทร<input id="tel" type="tel" required autocomplete="tel"></label>
+<label>ที่อยู่จัดส่ง<textarea id="addr" rows="3" required autocomplete="street-address"></textarea></label>
+<div class="err" id="err"></div>
+<div class="row"><button type="button" class="btn ghost" id="cancel">ยกเลิก</button><button class="btn" type="submit">ยืนยันสั่งซื้อ</button></div>
+</form>
+<div class="done" id="done" hidden>
+<h3>รับออเดอร์แล้ว</h3>
+<p id="doneText"></p>
+<div class="row"><button class="btn" id="closeDone">ปิด</button></div>
+</div>
+</dialog>
+
+<script>
+/* ===== ตั้งค่า: วางลิงก์ CSV ที่ได้จาก Google Sheet (ไฟล์ > แชร์ > เผยแพร่ไปยังเว็บ > เลือกชีต > CSV) ===== */
+const PRODUCTS_CSV = "";   // ชีต Products
+const SHOP_CSV     = "";   // ชีต Shop (ไม่ใส่ก็ได้)
+/* ถ้ายังไม่ใส่ลิงก์ เว็บจะใช้ข้อมูลตัวอย่างด้านล่างแทน */
+const FALLBACK_PRODUCTS = [
+ {SKU:"SH-001",name:"แชมพูสมุนไพรอัญชัน",price:"159",size:"250 ml",desc:"ลดผมร่วง บำรุงรากผม ผมนุ่มเงางาม สูตรอ่อนโยน",image:"IMG_3953.webp"},
+ {SKU:"SH-002",name:"แชมพูขจัดรังแค ซิงค์ไพริไทออน",price:"189",size:"300 ml",desc:"ขจัดรังแค ลดอาการคัน หนังศีรษะสะอาด สดชื่น",image:"IMG_3954.jpeg"}
+];
+
+function parseCSV(t){const rows=[];let r=[],f="",q=false;
+ for(let i=0;i<t.length;i++){const c=t[i];
+  if(q){if(c=='"'){if(t[i+1]=='"'){f+='"';i++}else q=false}else f+=c}
+  else if(c=='"')q=true;else if(c==','){r.push(f);f=""}
+  else if(c=='\n'){r.push(f);rows.push(r);r=[];f=""}else if(c!='\r')f+=c}
+ if(f!==""||r.length){r.push(f);rows.push(r)}return rows}
+async function loadCSV(url){const res=await fetch(url);if(!res.ok)throw new Error(res.status);return parseCSV(await res.text())}
+function toProducts(rows){return rows.slice(1).filter(r=>r[0]).map(r=>({SKU:r[0].trim(),name:r[1],price:r[2],size:r[3],desc:r[4],image:(r[5]||"").trim()}))}
+const esc=s=>String(s??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]));
+const baht=n=>Number(n).toLocaleString("th-TH");
+
+let products=[],current=null;
+async function init(){
+ try{products=PRODUCTS_CSV?toProducts(await loadCSV(PRODUCTS_CSV)):FALLBACK_PRODUCTS}
+ catch(e){products=FALLBACK_PRODUCTS}
+ render();
+ if(SHOP_CSV){try{const rows=await loadCSV(SHOP_CSV);const m=Object.fromEntries(rows.slice(1).map(r=>[r[0],r[1]]));
+  if(m["ชื่อร้าน (ผู้ส่ง)"]){shopName.textContent=shopName2.textContent=m["ชื่อร้าน (ผู้ส่ง)"]}
+  if(m["เบอร์โทรผู้ส่ง"])shopTel.textContent=m["เบอร์โทรผู้ส่ง"]}catch(e){}}
+}
+function render(){
+ grid.innerHTML=products.map((p,i)=>`<article class="card">
+  <div class="img">${p.image?`<img src="${esc(p.image)}" alt="${esc(p.name)}" onerror="this.parentNode.textContent='🧴'">`:'🧴'}</div>
+  <div class="body"><h3>${esc(p.name)}</h3><div class="size">${esc(p.size)} · รหัส ${esc(p.SKU)}</div>
+  <p style="margin:4px 0 8px">${esc(p.desc)}</p>
+  <div class="price">฿${baht(p.price)}</div>
+  <button class="btn" data-i="${i}">สั่งซื้อ</button></div></article>`).join("")||'<div class="msg">ยังไม่มีสินค้า</div>';
+}
+grid.addEventListener("click",e=>{const b=e.target.closest("button[data-i]");if(!b)return;
+ current=products[b.dataset.i];orderForm.hidden=false;done.hidden=true;err.textContent="";qty.value=1;updateSum();dlg.showModal()});
+function updateSum(){const n=Math.max(1,parseInt(qty.value)||1);sum.textContent=`${current.name} × ${n} = ฿${baht(n*Number(current.price))}`}
+qty.addEventListener("input",updateSum);
+cancel.onclick=()=>dlg.close();closeDone.onclick=()=>dlg.close();
+orderForm.addEventListener("submit",e=>{e.preventDefault();
+ if(!/^[0-9+\-\s]{8,15}$/.test(tel.value.trim())){err.textContent="กรอกเบอร์โทรเป็นตัวเลข 8-15 หลัก";return}
+ const n=Math.max(1,parseInt(qty.value)||1);
+ doneText.textContent=`ขอบคุณคุณ${name.value.trim()} ออเดอร์ ${current.name} × ${n} ยอด ฿${baht(n*Number(current.price))} จะจัดส่งไปที่ ${addr.value.trim()}`;
+ orderForm.hidden=true;done.hidden=false});
+init();
+</script>
+</body>
+</html>
